@@ -1,0 +1,21 @@
+
+
+
+===================
+SPECIFICHE TECNICHE
+===================
+
+Il modulo "profile" deve permettere...
+
+(1) All'utente loggato di aggiornare i propri dati.
+In particolare dovrà essere possibile:
+- cambiare email e password (con dovute comunicazioni di sicurezza via mail),
+- cambiare i propri dati personali (nome, cognome, sesso, data di nascita).
+Non sarà necessario interfacciarsi col modulo dei "permessi" per la gestione della sicurezza,
+controllare solo che il profilo da aggiornare corrisponda a quello dell'utente loggato.
+Effettuare il controllo nell'accessRules dei controller.
+Utilizzo del modulo dei permessi da implementare in seguito.
+
+(2) All'utente, loggato o non, di vedere il profilo proprio o altrui.
+
+

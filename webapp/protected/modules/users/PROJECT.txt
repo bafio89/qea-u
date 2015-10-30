@@ -1,0 +1,159 @@
+
+
+===================
+SPECIFICHE TECNICHE
+===================
+
+
+----------------------------------------------------------------------------------------------------
+ REV.	| DESCRIPTION										| EDITED BY				| DATE
+----------------------------------------------------------------------------------------------------
+ 0		| init. release										| Niccolò Ciardo		| 27-nov-2013
+----------------------------------------------------------------------------------------------------
+
+
+--------------------
+Analisi (funzionale)
+--------------------
+
+Si vuole realizzare un modulo riusabile che permetta di:
+ - creare un utente (basic)
+ - cambiare stato (attivazione, disattivazione, cancellazione logica, ban, ecc)
+ - fare login basic
+ - fare login social
+ - fare logout
+ - recuperare password
+ - amministrare gli utenti
+
+
+--------------
+Analisi (dati)
+--------------
+
+Il modulo si occuperà della gestione degli utenti e di tutte le informazioni di base correlate:
+ - system account
+ - personal info
+ - meta info
+ - settings
+ - additional info
+ - addresses
+ - oauth accounts
+ - groups
+
+In "system account" sono racchiuse poche essenziali informazioni 
+necessarie per identificare in modo univoco l'utente.
+
+Le "personal info" sono le informazioni principali riferite alla persona, come:
+ - nome
+ - cognome
+ - sesso
+ - data di nascita
+
+Le "meta info", "settings" e "additional info" sono strutture dati molto simili fra loro, 
+ma ci sono delle sottili differenze:
+ - Nel caso di "meta info" e "settings" la coppia "user_id" e "key" 
+   non dovrebbe ripetersi (es. l'altezza, il colore degli occhi, ecc).
+ - Nel caso di "additional info" è possibile che la stessa coppia 
+   abbia più ricorrenze (es. più indirizzi email, numeri di telefono, ecc).
+
+In generale tutte le "additional info" che NON sono costituite da informazioni atomiche
+è buona norma modellarle in tabelle dedicate.
+
+L'esempio per eccellenza è "addresses", poiché non solo si tratta di una informazione 
+composta da più campi; in più è generica e può essere associata anche ad altre entità,
+totalmente differenti dall'utente, come ad esempio "events" oppure "organizations".
+
+Altro esempio è sicuramente "oauth accounts" in quanto composto da più campi e 
+per la stessa ragione ha una struttura dati dedicata e dovutamente modellata.
+Questa informazione serve ad associare ad un utente gli account che fanno uso di OAuth 2.
+Come "oauth provider" si potrà specificare "facebook", "twitter", "linkedin", ecc.
+Oppure, nel caso si decida di fornire a terzi accesso ai propri utenti, tramite API,
+si potrà definire un proprio provider. Questo duplice utilizzo apre le porte per una 
+propria implementazione di OAuth 2, in futuro.
+
+I "groups", invece, rappresentano nella maniera più astratta un'aggregazione di utenti.
+Un gruppo, per esempio, può essere una "contact list", una "company", un "corso di laurea".
+
+
+-------------------------
+Analisi (implementazione)
+-------------------------
+
+** CREAZIONE UTENTE **
+
+La creazione dell'utente, intesa come procedura di registrazione, non è competenza 
+di questo modulo. Inserire una metodo statico nel model Users per salvare 
+un nuovo record nel DB.
+
+Firma metodo:
+
+public static function create($email, $password = null, $notification = true);
+return true se l'operazione ha successo, false altrimenti.
+
+Nella fase di creazione considerare la possibilità di salvare un 
+"activation token" nella tabella dei metadati.
+Questo "codice di attivazione" potrebbe essere utile in seguito.
+
+** STATO UTENTE **
+
+Creare un metodo nella classe model Users per impostare lo stato dell'utente e 
+dopodiché salvare le modifiche in DB. Gli stati dell'utente devono essere 
+memorizzati in variabili statiche di classe.
+
+Possibili stati:
+
+STATUS_INACTIVE = 0
+STATUS_ACTIVE
+STATUS_DELETED
+STATUS_SUSPENDED
+
+Firma metodo:
+
+public function changeStatus($status = 0);
+return true se l'operazione ha successo, false altrimenti.
+
+Implementare una funzione nel controller per l'attivazione dell'account utente, 
+tramite "codice di attivazione".
+
+** LOGIN **
+
+Implementare l'azione di login estendendo CUserIdentity di Yii e 
+seguendo lo standard imposto dal framework.
+Tenere in considerazione sia il login base (via email + password) 
+che il login social (via email, ID remoti, access tokens).
+Tenere inoltre in considerazione che nel caso del PRIMO 
+login via social network, potrebbe essere necessario creare 
+l'utente, se non esiste. Tenere inoltre in considerazione che se 
+l'utente non esiste è consigliabile generare una password casuale 
+e inviarla all'utente.
+
+Rendere indipendente, in un widget, il form di login e creare una 
+vista molto basilare, che utilizzi il widget.
+
+** LOGOUT **
+
+Implementare logout seguendo gli standard di Yii.
+
+** RECUPERO PASSWORD **
+
+Implementare un metodo di recupero password nel modello degli utenti.
+La password deve essere cambiata con una casuale e poi 
+deve essere inviata all'utente tramite email.
+
+Firma metodo:
+
+public function generatePassword($lenght = 8, $notification = true); 
+return true se l'operazione ha successo, false altrimenti.
+
+
+-------------------------------
+Analisi (prossime funzionalità)
+-------------------------------
+
+** AMMINISTRAZIONE **
+
+Una delle prossime funzionalità sarà sicuramente il pannello di 
+amministrazione degli utenti. Richiederà una serie di moduli ed 
+estensioni attualmente non presenti, tra cui quello per 
+la gestione dei permessi.
+

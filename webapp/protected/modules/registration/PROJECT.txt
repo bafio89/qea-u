@@ -1,0 +1,77 @@
+===============================================================================================
+SPECIFICHE TECNICHE
+===============================================================================================
+
+----------------------------------------------------------------------------------------------------
+ REV.	| DESCRIPTION										| EDITED BY				| DATE
+----------------------------------------------------------------------------------------------------
+ 0		| init. release										| Dav Ide		        | 20-dic-2013
+----------------------------------------------------------------------------------------------------
+
+--------------------
+Analisi (funzionale)
+--------------------
+
+Il modulo "registration" permette la registrazione di un nuovo utente.
+
+Tale modulo prevede la registrazione :
+- CLASSICA , in cui l'utente deve inserire i propri dati manualmente ;
+-'SOCIAL'  , in cui i dati sono catturati da un suo account social collegato all'app QBASE.
+
+Il modulo mette a disposizione due strategie per quanto riguarda il flusso di registrazione : 
+- WATERFALL , permette la registrazione in un unico passo(pagina);
+- WIZARD , permette la registrazione in più passi(pagine).
+ 
+I dati del nuovo utente salvati durante il processo di registrazione sono divisi in tre categorie : 
+
+- BASIC {e-mail, password, captcha}
+- PERSONAL INFO {nome,cognome,data di nascita,sesso }
+- DOMAIN INFO { informazioni specifiche di dominio }
+
+Ciascuna categoria può essere rimossa e customizzata in base alle proprie esigenze.
+Altre categorie possono essere aggiunte.
+ 
+-----------------------------------
+Caratteristiche tecniche del Modulo
+-----------------------------------
+
+DIPENDENZE:
+
+- Modulo User
+
+LINGUE PREVISTE : 
+- Italiano
+- Inglese
+  
+SCELTE :
+  
+Salvataggio dei dati per la categoria PERSONAL INFO : 
+- la prima lettera del NOME è riportata in maiuscolo.
+
+Processo di Registrazione : 
+
+- Le informazioni inserite dall 'utente ad ogni passo sono memorizzate sia nel DB che in sessione.
+I dati in sessione sono azzerati al termine della registrazione.
+
+- Nel caso della registrazione SOCIAL , le variabili di sessione SOCIAL sono azzerate appena 
+i dati sono memorizzati nel DB e le rispettive variabili di sessione vengono create.
+
+- La registrazione mediante WIZARD prevede la possibilità di andare avanti e indietro per poter 
+modificare le informazioni settate, ad eccetto del primo passo.
+
+- La registrazione mediante WIZARD reindirizza l'utente nel caso tramite URL tenta di accedere 
+agli step successivi senza aver fatto quello iniziale.
+
+- La registrazione mediante WIZARD non consente di modificare le informazioni del primo step
+una volta settate , l'utente è costretto a terminare la registrazione.
+
+- Per la registrazione SOCIAL il captcha è disabilitato.
+
+--------------------
+Implementazioni future
+--------------------
+
+- Visualizzare la data nel formato corrispondente alla lingua di preferenza dell'utente.
+- Aggiungere regola di validazione per il campo birthdate.
+
+

@@ -1,0 +1,12 @@
+/.project
+/.buildpath
+/.settings/
+
+/webapp/.htaccess
+/webapp/assets/
+/webapp/protected/data/*.mwb
+/webapp/protected/data/*.bak
+/webapp/protected/runtime/
+/webapp/protected/tests/
+
+/yii/
